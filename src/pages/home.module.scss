@@ -1,1 +1,43 @@
-// TODO
+.homeSections {
+  width: 100%;
+  margin-bottom: 3rem;
+  color: var(--body);
+
+  h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+    color: var(--heading);
+  }
+
+  p {
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+  }
+
+  div {
+    display: flex;
+    height: 1.25rem;
+    gap: 1.5rem;
+
+    span {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    p {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.loadButton {
+  margin: 1rem 0  5rem;
+  border: 0;
+  background: transparent;
+  font-weight: 600;
+  font-size: 1.125rem;
+  
+  p {
+    color: var(--highlight);
+  }
+}
