@@ -1,31 +1,40 @@
-.homeSections {
-  width: 100%;
-  margin-bottom: 3rem;
-  color: var(--body);
-
-  h1 {
-    font-size: 1.75rem;
-    margin-bottom: 0.5rem;
-    color: var(--heading);
-  }
-
-  p {
-    font-size: 1.125rem;
-    margin-bottom: 1.5rem;
-  }
-
-  div {
-    display: flex;
-    height: 1.25rem;
-    gap: 1.5rem;
-
-    span {
-      display: flex;
-      gap: 0.5rem;
+.main {
+  section {
+    width: 100%;
+    margin-bottom: 3rem;
+    color: var(--body);
+  
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      color: var(--heading);
+      transition: color 0.2s;
     }
-
+  
     p {
-      font-size: 0.875rem;
+      font-size: 1.125rem;
+      margin-bottom: 1.5rem;
+    }
+  
+    div {
+      display: flex;
+      height: 1.25rem;
+      gap: 1.5rem;
+  
+      span {
+        display: flex;
+        gap: 0.5rem;
+      }
+  
+      p {
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  a:hover {
+    h1 {
+      color: var(--highlight);
     }
   }
 }

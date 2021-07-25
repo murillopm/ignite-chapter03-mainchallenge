@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link'
+import Head from 'next/head'
 import { GetStaticProps } from 'next';
 
 import Prismic from '@prismicio/client';
@@ -10,7 +14,7 @@ import ptBR from 'date-fns/locale/pt-BR';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
-import { useState } from 'react';
+
 
 interface Post {
   uid?: string;
@@ -34,6 +38,11 @@ interface HomeProps {
 export default function Home({ postsPagination }: HomeProps) {
   const [posts, setPosts] = useState<Post[]>(postsPagination.results)
   const [hasNextPage, setHasNextPage] = useState<string | null>(postsPagination.next_page)
+  const router = useRouter()
+  
+  function handleClickPost(slug: string) {
+    router.push(`/post/${slug}`)
+  }
   
   function handleLoadPost() {
     fetch(hasNextPage)
@@ -42,11 +51,7 @@ export default function Home({ postsPagination }: HomeProps) {
         const newPosts = data.results.map(post => {
           return {
             uid: post.uid,
-            first_publication_date: format(
-              new Date(post.first_publication_date), 
-              'd MMM y',
-              { locale: ptBR }
-            ),
+            first_publication_date: post.first_publication_date,
             data: {
               title: post.data.title,
               subtitle: post.data.subtitle,
@@ -61,22 +66,35 @@ export default function Home({ postsPagination }: HomeProps) {
 
   return(
     <div className={commonStyles.page}>
-      <main>
+      <Head>
+        <title>Home | spacetraveling</title>
+      </Head>
+      <main className={styles.main}>
         {posts.map(post => (
-          <section key={post.uid} className={styles.homeSections}>
-            <h1>{post.data.title}</h1>
-            <p>{post.data.subtitle}</p>
-            <div>
-              <span>
-                <FiCalendar/>
-                <p>{post.first_publication_date}</p>
-              </span>
-              <span>
-                <FiUser/>
-                <p>{post.data.author}</p>
-              </span>
-            </div>
-          </section>
+          <Link key={post.uid} href={`/post/${post.uid}`}>
+            <a>
+              <section>
+                <h1>{post.data.title}</h1>
+                <p>{post.data.subtitle}</p>
+                <div>
+                  <span>
+                    <FiCalendar/>
+                    <p>
+                      {format(
+                        new Date(post.first_publication_date), 
+                        'd MMM y',
+                        { locale: ptBR }
+                      )}
+                    </p>
+                  </span>
+                  <span>
+                    <FiUser/>
+                    <p>{post.data.author}</p>
+                  </span>
+                </div>
+              </section>
+            </a>
+          </Link>
         ))}
         {hasNextPage && (
           <button 
@@ -93,21 +111,22 @@ export default function Home({ postsPagination }: HomeProps) {
 
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
-  const postsResponse = await prismic.query(Prismic.predicates.at(
+  const postsResponse = await prismic.query([Prismic.predicates.at(
     'document.type', 'post'
-  ), {
-    pageSize: 1,
+  )], {
+    fetch: ['post.title, post.subtitle', 'post.author'],
+    pageSize: 2,
   })
   //console.log(postsResponse)
 
   const posts = postsResponse.results.map(post => {
     return {
       uid: post.uid,
-      first_publication_date: format(
+      first_publication_date: post.first_publication_date/*format(
         new Date(post.first_publication_date), 
         'd MMM y',
         { locale: ptBR }
-      ),
+      )*/,
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
