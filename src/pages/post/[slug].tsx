@@ -9,6 +9,8 @@ import { RichText } from 'prismic-dom'
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
+import { FiUser, FiCalendar, FiClock} from 'react-icons/fi'
+
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
@@ -41,35 +43,53 @@ export default function Post({ post }: PostProps) {
   if(router.isFallback) {
     return <p>Carregando...</p>
   }
+
+  const time = post.data.content.reduce((acc, content) => {
+    const heading = content.heading.split(' ').length
+    const body = RichText.asText(content.body).split(' ').length
+    return heading + body
+  }, 0)
+  
+  const timeString = String(Math.round(time/200) + 1) + ' min'
+
   return (
-    <>
+    <div className={styles.banner}>
       <Head>
         <title>Post | spacetraveling</title>
       </Head>
-      <img src={post.data.banner.url} alt="banner" />
-      <article className={commonStyles.page}>
+      <img src={post.data.banner.url} alt="banner"/>
+      <article className={styles.post}>
         <h1>{post.data.title}</h1>
-        <div>
+        <div className={styles.postInfo}>
           <span>
-            {format(
-              new Date(post.first_publication_date), 
-              'd MMM y',
-              { locale: ptBR }
-            )}
+            <FiCalendar />
+            <p>
+              {format(
+                new Date(post.first_publication_date), 
+                'd MMM y',
+                { locale: ptBR }
+              )}
+            </p>
           </span>
-          <span>{post.data.author}</span>
-          <span>tempo estimado</span>
+          <span>
+            <FiUser />
+            <p>{post.data.author}</p>
+          </span>
+          <span>
+            <FiClock />
+            <p>{timeString}</p>
+          </span>
         </div>
           {post.data.content.map((content, index) => (
-            <section key={index}>
+            <section key={index} className={styles.postSection}>
               <h2>{content.heading}</h2>
-              {content.body.map((body, index) => (
-                <p key={index}>{body.text}</p>
-              ))}
+              <div 
+                dangerouslySetInnerHTML={{__html: RichText.asHtml(content.body)}}
+              />
             </section>
         ))}
       </article>
-    </>
+    </div>
   )
 }
 
