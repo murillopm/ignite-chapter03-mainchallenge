@@ -14,6 +14,7 @@ import { FiUser, FiCalendar, FiClock} from 'react-icons/fi'
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import Link from 'next/link';
+import Comments from '../../components/Comments';
 
 interface Post {
   uid: string;
@@ -133,6 +134,7 @@ export default function Post({
           )}   
 
         </footer>
+        <Comments slug={post.uid}/>
 
         {preview && (
           <Link href="/api/exit-preview">
@@ -186,7 +188,6 @@ export const getStaticProps: GetStaticProps = async ({
       content: response.data.content,
     }
   }
-  console.log(response)
 
   const previousPost = await prismic.query([Prismic.predicates.at(
     'document.type', 'post'
